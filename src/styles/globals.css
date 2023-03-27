@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.body-style {
+  @apply w-full p-4 font-sans h-screen bg-slate-50;
+}
+
+.main-container {
+  @apply mx-auto flex w-3/4 flex-col;
+}
