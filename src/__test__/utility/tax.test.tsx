@@ -1,5 +1,4 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
 import calculateTaxHelper from "../../utility/tax";
 
 describe("Tax Calculator", () => {

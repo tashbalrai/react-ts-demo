@@ -2,7 +2,7 @@ import React from "react";
 import { TaxResult, UserInput } from "../config/types";
 
 const TaxResultsView = ({
-  data: result,
+  data,
   input,
   netIncome,
 }: {
@@ -17,8 +17,8 @@ const TaxResultsView = ({
         <p className="text-cyan-600">
           <label>Total Income:</label> {input.totalIncome.toFixed(2)}
         </p>
-        {result &&
-          result.map((tax, idx) => {
+        {data &&
+          data.map((tax, idx) => {
             return (
               <p className="text-cyan-600" key={idx}>
                 <label>
