@@ -6,7 +6,7 @@ This repo is created using the `create-react-app`.
 
 I know that this way of building the React application is now deprecated. At first, I decided to go with Next.Js. Since, this assignment is concerned with React + Typescript, so I prefered `create-react-app` over Next.Js to work with pure React + Typescript and to avoid any abstraction provided by Next.Js framework.
 
-I have tried to complete the task within the allocated time, but I wasn't able to complete the unit tests. I have added few unit tests but not all and full unit tests are there.
+I have tried to complete the task within the allocated time, but I wasn't able to add full unit tests for all the components. I have added few unit tests. Like, I have covered the unit test for `calculateTaxHelper()` function and for few other components.
 
 ### Installation
 
