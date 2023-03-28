@@ -1,15 +1,6 @@
-import React, { InputHTMLAttributes, useState } from "react";
-import FieldError from "./field_error";
-
-interface InputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
-  className?: string;
-  onChange?: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    flag?: boolean
-  ) => void;
-  children?: React.ReactNode;
-  label: string;
-}
+import React, { useState } from "react";
+import FieldErrorView from "./field_error";
+import { InputBoxProps } from "../../config/types";
 
 const InputBox = (props: InputBoxProps) => {
   const { className, name, label, onChange, ...rest } = props;
@@ -37,7 +28,7 @@ const InputBox = (props: InputBoxProps) => {
       <label htmlFor={name}>{label}</label>
       <br />
       <input className={className} onChange={handleOnChange} {...rest} />
-      <FieldError isError={error} message={`${label} is not valid.`} />
+      <FieldErrorView isError={error} message={`${label} is not valid.`} />
     </div>
   );
 };

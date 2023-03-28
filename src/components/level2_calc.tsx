@@ -1,25 +1,84 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import InputBox from "../components/ui/input_box";
 import SelectBox from "../components/ui/select_box";
+import TaxResultsView from "./tax_result_view";
+import fetchTaxRates from "../api/tax";
+import { TaxRates, TaxData } from "../config/types";
+import calculateTaxHelper from "../utility/tax";
 
 const CalculatorLevel2 = () => {
-  const handleOnChangeIncome = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value + " Parent");
-  };
+  const [incomeFlag, setIncomeFlag] = useState<boolean>(false);
+  const [yearFlag, setYearFlag] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleOnChangeYear = (e: React.ChangeEvent<{ value: unknown }>) => {
-    console.log(e.target.value + " Parent Year");
-  };
+  const [state, setState] = useState<TaxData>({
+    input: { totalIncome: 0, year: 2019 },
+  });
+  const [brackets, setTaxBrackets] = useState<TaxRates[] | null>(null);
 
-  const validateForm = (e: React.SyntheticEvent) => {
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMessage(null);
+    setLoading(true);
+    fetchTaxRates(state.input.year)
+      .then((brackets: TaxRates[]) => {
+        setTaxBrackets(brackets);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setMessage(error.message);
+        setLoading(true);
+      });
+  }, [state.input.year]);
+
+  const calculateTax = useCallback((): void => {
+    if (null === brackets) {
+      return;
+    }
+
+    setState(calculateTaxHelper(state, brackets));
+  }, [state.input]);
+
+  const handleCalculation = (e: React.SyntheticEvent<EventTarget>) => {
     e.preventDefault();
+    calculateTax();
   };
+
+  const handleOnChangeIncome = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    flag = false
+  ) => {
+    setIncomeFlag(flag);
+    setState({
+      ...state,
+      input: { totalIncome: Number(e.target.value), year: state.input.year },
+    });
+  };
+
+  const handleOnChangeYear = (
+    e: React.ChangeEvent<{ value: unknown }>,
+    flag = false
+  ) => {
+    setIncomeFlag(flag);
+    setState({
+      ...state,
+      input: {
+        totalIncome: state.input.totalIncome,
+        year: Number(e.target.value),
+      },
+    });
+  };
+
+  const isDiabled = () => incomeFlag || yearFlag || loading;
+  const getButtonLabel = () => (loading ? "Loading..." : "Calculate");
 
   return (
     <>
-      <section className="col-span-3 p-2">
+      <section className="col-span-2 p-2">
         <h2 className="text-xl font-bold">Tax Calculator</h2>
-        <form onSubmit={validateForm}>
+        {message && <div className="w-full p-2 text-red-600">{message}</div>}
+        <form onSubmit={handleCalculation}>
           <SelectBox
             label="Select Tax Year"
             name="year"
@@ -40,26 +99,18 @@ const CalculatorLevel2 = () => {
               type="submit"
               name="submitBtn"
               id="submitBtn"
-              className="w-full h-10 rounded-md p-2 bg-cyan-600 hover:bg-cyan-700 hover:cursor-pointer text-white font-bold"
-              value="Calculate"
+              className="disabled:bg-slate-300 w-full h-10 rounded-md p-2 bg-cyan-600 hover:bg-cyan-700 hover:cursor-pointer text-white font-bold"
+              value={getButtonLabel()}
+              disabled={isDiabled()}
             />
           </div>
         </form>
       </section>
-      <section className="col-span-2 bg-sky-50 p-2">
-        <h2 className="text-xl font-bold">Results</h2>
-        <div className="px-2">
-          <p className="text-cyan-600">
-            <label>Total Income:</label> 60000
-          </p>
-          <p className="text-cyan-600">
-            <label>Total Tax:</label> 60000
-          </p>
-          <p className="text-cyan-600 border-t-2 border-cyan-600 mt-5">
-            <label className="font-bold">Net Income:</label> 60000
-          </p>
-        </div>
-      </section>
+      <TaxResultsView
+        data={state.results}
+        input={state.input}
+        netIncome={state.netIncome}
+      />
     </>
   );
 };

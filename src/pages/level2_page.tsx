@@ -2,7 +2,7 @@ import React from "react";
 import PageLayout from "../components/layout/page_layout";
 import CalculatorLevel2 from "../components/level2_calc";
 
-const Level1Page = () => {
+const Level2Page = () => {
   return (
     <PageLayout>
       <CalculatorLevel2 />
@@ -10,4 +10,4 @@ const Level1Page = () => {
   );
 };
 
-export default Level1Page;
+export default Level2Page;

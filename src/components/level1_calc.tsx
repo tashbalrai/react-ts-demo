@@ -1,33 +1,40 @@
 import React, { useCallback, useEffect, useState } from "react";
 import InputBox from "../components/ui/input_box";
+import TaxResultsView from "./tax_result_view";
+import fetchTaxRates from "../api/tax";
+import { TaxRates, TaxData } from "../config/types";
+import calculateTaxHelper from "../utility/tax";
 
 const CalculatorLevel1 = () => {
   const [incomeFlag, setIncomeFlag] = useState<boolean>(false);
-  const [totalIncome, setIncome] = useState<number>(0);
-  const [rate, setRate] = useState<number>(0);
-  const [tax, setTax] = useState<number>(0);
-  const [net, setNet] = useState<number>(0);
+
+  const [state, setState] = useState<TaxData>({ input: { totalIncome: 0 } });
+  const [brackets, setTaxBrackets] = useState<TaxRates[] | null>(null);
+
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    setRate(0.12);
+    setMessage(null);
+    fetchTaxRates()
+      .then((brackets: TaxRates[]) => {
+        setTaxBrackets(brackets);
+      })
+      .catch((error) => {
+        setMessage(error.message);
+      });
   }, []);
 
-  const calculateTax = useCallback(() => {
-    let tax = 0;
-    let net = 0;
-    if (totalIncome > 0) {
-      tax = totalIncome * rate;
-      net = totalIncome - tax;
+  const calculateTax = useCallback((): void => {
+    if (null === brackets) {
+      return;
     }
-    setTax(tax);
-    setNet(net);
-  }, [totalIncome, rate]);
+
+    setState(calculateTaxHelper(state, brackets));
+  }, [state.input]);
 
   const handleCalculation = (e: React.SyntheticEvent<EventTarget>) => {
     e.preventDefault();
     calculateTax();
-    setMessage("Unexpected error occurred.");
   };
 
   const handleOnChangeIncome = (
@@ -35,15 +42,12 @@ const CalculatorLevel1 = () => {
     flag = false
   ) => {
     setIncomeFlag(flag);
-    setIncome(0);
-    if (false === flag) {
-      setIncome(Number(e.target.value));
-    }
+    setState({ ...state, input: { totalIncome: Number(e.target.value) } });
   };
 
   return (
     <>
-      <section className="col-span-3 p-2">
+      <section className="col-span-2 p-2">
         <h2 className="text-xl font-bold">Tax Calculator</h2>
         {message && <div className="w-full p-2 text-red-600">{message}</div>}
         <form onSubmit={handleCalculation}>
@@ -67,23 +71,11 @@ const CalculatorLevel1 = () => {
           </div>
         </form>
       </section>
-      <section className="col-span-2 bg-sky-50 p-2">
-        <h2 className="text-xl font-bold">Results</h2>
-        <div className="px-2">
-          <p className="text-cyan-600">
-            <label>Total Income:</label> {totalIncome}
-          </p>
-          <p className="text-cyan-600">
-            <label>Total Tax:</label> {tax}
-          </p>
-          <p className="text-cyan-600">
-            <label>Tax Rate:</label> {rate}
-          </p>
-          <p className="text-cyan-600 border-t-2 border-cyan-600 mt-5">
-            <label className="font-bold">Net Income:</label> {net}
-          </p>
-        </div>
-      </section>
+      <TaxResultsView
+        data={state.results}
+        input={state.input}
+        netIncome={state.netIncome}
+      />
     </>
   );
 };

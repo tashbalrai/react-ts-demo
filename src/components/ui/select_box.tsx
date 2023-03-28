@@ -1,12 +1,6 @@
-import React, { SelectHTMLAttributes, useState } from "react";
-import FieldError from "./field_error";
-
-interface SelectBoxProps extends SelectHTMLAttributes<HTMLSelectElement> {
-  className?: string;
-  onChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
-  children?: React.ReactNode;
-  label: string;
-}
+import React, { useState } from "react";
+import FieldErrorView from "./field_error";
+import { SelectBoxProps } from "../../config/types";
 
 const SelectBox = (props: SelectBoxProps) => {
   const { className, name, label, onChange, ...rest } = props;
@@ -15,14 +9,15 @@ const SelectBox = (props: SelectBoxProps) => {
 
   const handleOnChange = (e: React.ChangeEvent<{ value: unknown }>) => {
     const value = e.target.value;
-
-    setError(false);
+    let flag = false;
+    setError(flag);
     if ("" === value) {
-      setError(true);
+      flag = true;
+      setError(flag);
     }
 
     if (onChange) {
-      onChange(e);
+      onChange(e, flag);
     }
 
     return;
@@ -33,11 +28,10 @@ const SelectBox = (props: SelectBoxProps) => {
       <label htmlFor={name}>{label}</label>
       <br />
       <select className={className} onChange={handleOnChange} {...rest}>
-        <option value="">Select</option>
-        <option value="1">Select1</option>
-        <option value="two">Select2</option>
+        <option value="2019">2019</option>
+        <option value="2020">2020</option>
       </select>
-      <FieldError
+      <FieldErrorView
         isError={error}
         message={`Please select a value from ${label}.`}
       />

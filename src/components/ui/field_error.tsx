@@ -1,12 +1,8 @@
 import React from "react";
+import { FieldError } from "../../config/types";
 
-interface FieldError {
-  isError: boolean;
-  message: string;
-}
-
-const FieldError = ({ isError, message }: FieldError) => {
+const FieldErrorView = ({ isError, message }: FieldError) => {
   return isError ? <div className="w-full text-red-500">{message}</div> : null;
 };
 
-export default FieldError;
+export default FieldErrorView;
