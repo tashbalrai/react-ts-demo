@@ -32,17 +32,13 @@ const CalculatorLevel2 = () => {
       });
   }, [state.input.year]);
 
-  const calculateTax = useCallback((): void => {
+  const handleCalculation = (e: React.SyntheticEvent<EventTarget>) => {
+    e.preventDefault();
     if (null === brackets) {
       return;
     }
 
     setState(calculateTaxHelper(state, brackets));
-  }, [state.input]);
-
-  const handleCalculation = (e: React.SyntheticEvent<EventTarget>) => {
-    e.preventDefault();
-    calculateTax();
   };
 
   const handleOnChangeIncome = (
