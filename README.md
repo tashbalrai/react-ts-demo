@@ -8,6 +8,8 @@ I know that this way of building the React application is now deprecated. At fir
 
 I have tried to complete the task within the allocated time, but I wasn't able to add full unit tests for all the components. I have added few unit tests. Like, I have covered the unit test for `calculateTaxHelper()` function and for few other components.
 
+For Tax calculater, I have added funcationality for both Level 1 and Level 2.
+
 ### Installation
 
 Clone the repo and run the following command to install the application.
@@ -31,3 +33,5 @@ After your, docker container is running, start the application by using the foll
 ```bash
 npm start
 ```
+
+The above command automatically open the browser to http://localhost:3000
