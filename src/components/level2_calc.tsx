@@ -60,7 +60,7 @@ const CalculatorLevel2 = () => {
     e: React.ChangeEvent<{ value: unknown }>,
     flag = false
   ) => {
-    setIncomeFlag(flag);
+    setYearFlag(flag);
     setState({
       ...state,
       input: {
@@ -75,6 +75,7 @@ const CalculatorLevel2 = () => {
 
   return (
     <>
+      {/*TODO: convert to Component  */}
       <section className="col-span-2 p-2">
         <h2 className="text-xl font-bold">Tax Calculator</h2>
         {message && <div className="w-full p-2 text-red-600">{message}</div>}
